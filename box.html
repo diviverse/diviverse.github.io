@@ -22,10 +22,6 @@
         --bgs: 88%;
       }
 
-      * {
-        overflow: hidden !important;
-      }
-
       html {
         display: flex;
         justify-content: center;
@@ -833,6 +829,9 @@
     </div>
     <script>
       window.boot = function (data) {
+        console.log("Booting...");
+        console.log(data);
+
         function html(item) {
           return `<div class="item item_${item.no} rarity_${item.rarity}" id="${
             item.name
@@ -1258,6 +1257,8 @@
             }
 
             window.boot(userData);
+          } else {
+            console.log(user);
           }
         });
 
