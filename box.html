@@ -831,6 +831,8 @@
     </div>
     <script>
       window.boot = function (data) {
+        start();
+
         function html(item) {
           return `<div class="item item_${item.no} rarity_${item.rarity}" id="${
             item.name
@@ -1158,7 +1160,7 @@
           return Math.floor(Math.random() * (max - min)) + min;
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
+        function start() {
           initializeRoller();
           const iv = unpackInventory();
           if (iv) document.querySelector(".inventory").innerHTML = iv;
@@ -1176,7 +1178,7 @@
           document.querySelector(
             ".google"
           ).innerHTML += `<img src="${data.photoURL}" style="border-radius: 50%;">`;
-        });
+        }
 
         window.addEventListener("resize", function () {
           document.querySelector(".roll").style.transform = `scale(${
