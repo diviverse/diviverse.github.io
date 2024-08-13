@@ -1156,7 +1156,7 @@
 
           function isSelected(item) {
             const targetRect = document
-              .querySelector(".roll-holder")
+              .querySelector(".roll")
               .getBoundingClientRect();
             const centerX = targetRect.left + targetRect.width / 2;
             const centerY = targetRect.top + targetRect.height / 2;
@@ -1174,6 +1174,12 @@
             if (isRolling) return;
             isRolling = true;
             setTimeout(function () {
+              [].forEach.call(
+                document.querySelectorAll(".item"),
+                function (it) {
+                  it.classList.remove("winning-item");
+                }
+              );
               const spent =
                 parseInt(
                   document
@@ -1202,9 +1208,11 @@
           function goRoll() {
             setTimeout(function () {
               let winningItem = NaN;
-              document.querySelectorAll(".item").forEach((item) => {
-                if (isSelected(item)) winningItem = item;
-              });
+              document
+                .querySelectorAll("*:not(.inventory) > .item")
+                .forEach((item) => {
+                  if (isSelected(item)) winningItem = item;
+                });
               if (!winningItem) {
                 rollContainer.style.marginLeft =
                   (
@@ -1214,9 +1222,11 @@
                     ) - 10
                   ).toString() + "px";
               }
-              document.querySelectorAll(".item").forEach((item) => {
-                if (isSelected(item)) winningItem = item;
-              });
+              document
+                .querySelectorAll("*:not(.inventory) > .item")
+                .forEach((item) => {
+                  if (isSelected(item)) winningItem = item;
+                });
               const clone = winningItem.cloneNode(true);
               winningItem.classList.add("winning-item");
               const winning =
