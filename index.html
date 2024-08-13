@@ -101,7 +101,7 @@
       .roll {
         height: 100px;
         position: relative;
-        margin: 180px auto 30px auto;
+        margin: 130px auto 30px auto;
         width: 900px;
         background: -moz-linear-gradient(
           left,
@@ -215,6 +215,8 @@
             auto-fit,
             minmax(40px, 65px)
           ) !important;
+          padding-top: 65px !important;
+          max-height: 15vh !important;
         }
       }
 
@@ -562,7 +564,7 @@
         margin: 0 auto;
         width: 80%;
         max-width: 953px;
-        padding: 7px 15px 12px;
+        padding: 85px 15px 12px;
         height: auto;
         border: 2px solid #1c3344;
         background: #0e1a23;
@@ -574,10 +576,35 @@
         justify-content: center;
         justify-items: center;
         align-content: center;
+        overflow-y: scroll;
+        max-height: calc(25vh - 70px);
       }
 
       .inventory > .item {
         margin: 4px 2px 0.5px 2px;
+      }
+
+      .inventory::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        background-color: #1c3344;
+      }
+
+      .inventory::-webkit-scrollbar {
+        width: 10px;
+        background-color: #1c3344;
+        border-radius: 10px;
+      }
+
+      .inventory::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background-image: -webkit-gradient(
+          linear,
+          left bottom,
+          left top,
+          color-stop(0.44, rgb(122, 153, 217)),
+          color-stop(0.72, rgb(73, 125, 189)),
+          color-stop(0.86, rgb(28, 58, 148))
+        );
       }
 
       /* .inventory > .item:hover {} */
