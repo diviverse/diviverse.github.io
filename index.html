@@ -206,8 +206,8 @@
         .roll {
           width: 100vw !important;
           transform: scale(1) !important;
-          margin-top: 145px;
-          left: -11px;
+          margin-top: 145px !important;
+          left: -11px !important;
         }
 
         .roll,
@@ -230,8 +230,7 @@
             auto-fit,
             minmax(40px, 65px)
           ) !important;
-          padding-top: 65px !important;
-          max-height: 15vh !important;
+          max-height: 15vh;
         }
       }
 
@@ -579,20 +578,21 @@
         margin: 0 auto;
         width: 80%;
         max-width: 953px;
-        padding: 165px 15px 12px;
+        padding: 7px 15px 12px;
         height: auto;
         border: 2px solid #1c3344;
         background: #0e1a23;
         border-radius: 5px;
         display: grid;
-        align-items: center;
+        align-items: start;
         grid-template-columns: repeat(auto-fit, minmax(65px, 90px));
         gap: 5px;
         justify-content: center;
         justify-items: center;
-        align-content: center;
+        align-content: start;
         overflow-y: scroll;
-        max-height: calc(25vh - 130px);
+        max-height: 25vh;
+        box-sizing: border-box;
       }
 
       .inventory > .item {
@@ -1074,15 +1074,15 @@
               let rand = randomInt(1, 1000);
               let r;
 
-              if (rand <= 1) {
+              if (rand <= 5) {
                 r = "divine";
-              } else if (rand <= 25) {
+              } else if (rand <= 30) {
                 r = "mythic";
-              } else if (rand <= 75) {
+              } else if (rand <= 105) {
                 r = "legendary";
-              } else if (rand <= 250) {
+              } else if (rand <= 280) {
                 r = "epic";
-              } else if (rand <= 550) {
+              } else if (rand <= 580) {
                 r = "rare";
               } else {
                 r = "common";
@@ -1115,14 +1115,14 @@
                 gain += 20_000;
                 break;
               case "rare":
-                gain += 12_500;
+                gain += 13_000;
                 break;
               case "common":
-                gain += 7_500;
+                gain += 7_000;
                 break;
             }
 
-            gain *= Math.round(Math.random() * 50) / 100 + 0.75;
+            gain *= Math.round(Math.random() * 50) + 75;
 
             g =
               parseInt(
@@ -1130,7 +1130,8 @@
                   .getElementById("karma_gained")
                   .innerHTML.replace(/,/g, ""),
                 10
-              ) + gain;
+              ) +
+              gain / 100;
             animateNumber("karma_gained", g, 5000);
             data.gained = g;
             window.update(data);
@@ -1144,8 +1145,8 @@
                 .innerHTML.replace(/,/g, ""),
               10
             );
-            const luck = g / (spend ? spend : sp);
-            let lst = (luck + 0.0049).toString();
+            const luck = (g * 1000) / (spend ? spend : sp);
+            let lst = ((luck + 49) / 1000).toString();
             lst = lst.split(".")[0] + "." + lst.split(".")[1].slice(0, 2);
 
             document.getElementById("roll_luck").innerHTML = "x" + lst;
