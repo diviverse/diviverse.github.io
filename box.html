@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="source/diviverse.png" />
     <title>Diviverse</title>
     <link
       rel="stylesheet"
@@ -45,10 +46,19 @@
         left: 0;
         top: 0;
         color: white;
+        z-index: 5;
       }
 
       .diviverse span {
         margin-right: 2px;
+      }
+
+      .logo {
+        position: fixed;
+        top: 20px;
+        right: 25px;
+        width: 80px;
+        height: auto;
       }
 
       .bottom {
@@ -172,6 +182,10 @@
           width: 100%;
           position: fixed;
           margin: 25px auto 0;
+        }
+
+        .logo {
+          visibility: hidden;
         }
 
         .roll {
@@ -747,6 +761,7 @@
   </head>
   <body>
     <div class="diviverse"><span class="text_divine">divi</span>verse</div>
+    <img src="source/diviverse.png" class="logo" />
     <div class="roll">
       <div class="roll-holder">
         <div class="roll-container" style="margin-left: 0px"></div>
@@ -767,7 +782,7 @@
     </div>
     <br />
     <div class="center">
-      <button onclick="generate();" class="open">Open Box!</button>
+      <button class="open">Open Box!</button>
     </div>
     <br />
     <div class="inventory"></div>
@@ -831,378 +846,402 @@
     </div>
     <script>
       window.boot = function (data) {
-        function html(item) {
-          return `<div class="item item_${item.no} rarity_${item.rarity}" id="${
-            item.name
-          }" style="--image-path: url(${findPathOf(item)});"></div>`;
-        }
+        if (!window.running) {
+          window.running = true;
 
-        function findPathOf(item) {
-          return `'source/${item.no}.jpg'`;
-        }
-
-        var items = {
-          item_001: { no: "001", name: "Basic Gold Ring", rarity: "common" },
-          item_002: { no: "002", name: "Basic Azure Ring", rarity: "common" },
-          item_003: { no: "003", name: "Basic Bronze Ring", rarity: "common" },
-          item_004: {
-            no: "004",
-            name: "Tiger Guardian's Ring",
-            rarity: "legendary",
-          },
-          item_005: {
-            no: "005",
-            name: "Mystical Dark Draconic Ring",
-            rarity: "mythic",
-          },
-          item_006: {
-            no: "006",
-            name: "Ancient Ring of Rumbus King",
-            rarity: "epic",
-          },
-          item_007: { no: "007", name: "The Hawk Ring", rarity: "legendary" },
-          item_008: { no: "008", name: "Dark Slith Ring", rarity: "rare" },
-          item_009: { no: "009", name: "Double Ring", rarity: "common" },
-          item_010: { no: "010", name: "Gold Slith Ring", rarity: "rare" },
-          item_011: {
-            no: "011",
-            name: "Inferior Nature Ring",
-            rarity: "common",
-          },
-          item_012: { no: "012", name: "Basic Silver Ring", rarity: "common" },
-          item_013: {
-            no: "013",
-            name: "Pendant of the Magenta Tribe",
-            rarity: "rare",
-          },
-          item_014: {
-            no: "014",
-            name: "Gem of the Magenta Tribe",
-            rarity: "rare",
-          },
-          item_015: {
-            no: "015",
-            name: "Jewel of the Azure Sea",
-            rarity: "rare",
-          },
-          item_016: { no: "016", name: "Blood Red Necklace", rarity: "rare" },
-          item_017: { no: "017", name: "Ancient Crimson Ring", rarity: "rare" },
-          item_018: { no: "018", name: "Common Ring", rarity: "common" },
-          item_019: { no: "019", name: "Ruby Ring", rarity: "rare" },
-          item_020: {
-            no: "020",
-            name: "The Ring of the Dead",
-            rarity: "legendary",
-          },
-          item_021: {
-            no: "021",
-            name: "Inferior Golden Ring of the Teo Clan",
-            rarity: "rare",
-          },
-          item_022: {
-            no: "022",
-            name: "Silver Ring of the Teo Clan",
-            rarity: "rare",
-          },
-          item_023: { no: "023", name: "Emerald Ring", rarity: "epic" },
-          item_024: { no: "024", name: "Sapphire Ring", rarity: "epic" },
-          item_025: { no: "025", name: "Topaz Ring", rarity: "rare" },
-          item_026: { no: "026", name: "Jade Ring", rarity: "epic" },
-          item_027: { no: "027", name: "Ring of Yang", rarity: "rare" },
-          item_028: { no: "028", name: "Nature Ring", rarity: "rare" },
-          item_029: { no: "029", name: "Blood Red Ring", rarity: "epic" },
-          item_030: {
-            no: "030",
-            name: "Ring of the Azure Sea",
-            rarity: "epic",
-          },
-          item_031: {
-            no: "031",
-            name: "Inferior Emerald Ring",
-            rarity: "rare",
-          },
-          item_032: {
-            no: "032",
-            name: "Golden Ring of the Teo Clan",
-            rarity: "rare",
-          },
-          item_033: { no: "033", name: "Amethyst Ring", rarity: "epic" },
-          item_034: {
-            no: "034",
-            name: "Emerald Ring of the Teo Clan",
-            rarity: "epic",
-          },
-          item_035: {
-            no: "035",
-            name: "The Divine Tiara",
-            rarity: "divine",
-          },
-        };
-
-        function packInventory() {
-          return Array.from(document.querySelector(".inventory").children).map(
-            (it) => it.className.match(/item_\d{3}/)
-          );
-        }
-
-        function unpackInventory() {
-          let total;
-          if (data.inv) {
-            Array.from(data.inv.split(",")).forEach((it) => {
-              total += html(items[it]);
-            });
-          }
-          return total.slice(9);
-        }
-
-        function animateNumber(id, finalNumber, duration) {
-          const karmaElement = document.getElementById(id);
-          let startNumber = parseInt(
-            karmaElement.innerHTML.replace(/,/g, ""),
-            10
-          );
-          const startTime = performance.now();
-
-          function easeInOutCubic(t) {
-            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+          function html(item) {
+            return `<div class="item item_${item.no} rarity_${
+              item.rarity
+            }" id="${item.name}" style="--image-path: url(${findPathOf(
+              item
+            )});"></div>`;
           }
 
-          function updateNumber(currentTime) {
-            const elapsedTime = currentTime - startTime;
-            const progress = Math.min(elapsedTime / duration, 1);
+          function findPathOf(item) {
+            return `'source/${item.no}.jpg'`;
+          }
 
-            const easedProgress = easeInOutCubic(progress);
-            const currentNumber = Math.floor(
-              startNumber + easedProgress * (finalNumber - startNumber)
-            );
-            karmaElement.textContent = currentNumber.toLocaleString();
+          var items = {
+            item_001: { no: "001", name: "Basic Gold Ring", rarity: "common" },
+            item_002: { no: "002", name: "Basic Azure Ring", rarity: "common" },
+            item_003: {
+              no: "003",
+              name: "Basic Bronze Ring",
+              rarity: "common",
+            },
+            item_004: {
+              no: "004",
+              name: "Tiger Guardian's Ring",
+              rarity: "legendary",
+            },
+            item_005: {
+              no: "005",
+              name: "Mystical Dark Draconic Ring",
+              rarity: "mythic",
+            },
+            item_006: {
+              no: "006",
+              name: "Ancient Ring of Rumbus King",
+              rarity: "epic",
+            },
+            item_007: { no: "007", name: "The Hawk Ring", rarity: "legendary" },
+            item_008: { no: "008", name: "Dark Slith Ring", rarity: "rare" },
+            item_009: { no: "009", name: "Double Ring", rarity: "common" },
+            item_010: { no: "010", name: "Gold Slith Ring", rarity: "rare" },
+            item_011: {
+              no: "011",
+              name: "Inferior Nature Ring",
+              rarity: "common",
+            },
+            item_012: {
+              no: "012",
+              name: "Basic Silver Ring",
+              rarity: "common",
+            },
+            item_013: {
+              no: "013",
+              name: "Pendant of the Magenta Tribe",
+              rarity: "rare",
+            },
+            item_014: {
+              no: "014",
+              name: "Gem of the Magenta Tribe",
+              rarity: "rare",
+            },
+            item_015: {
+              no: "015",
+              name: "Jewel of the Azure Sea",
+              rarity: "rare",
+            },
+            item_016: { no: "016", name: "Blood Red Necklace", rarity: "rare" },
+            item_017: {
+              no: "017",
+              name: "Ancient Crimson Ring",
+              rarity: "rare",
+            },
+            item_018: { no: "018", name: "Common Ring", rarity: "common" },
+            item_019: { no: "019", name: "Ruby Ring", rarity: "rare" },
+            item_020: {
+              no: "020",
+              name: "The Ring of the Dead",
+              rarity: "legendary",
+            },
+            item_021: {
+              no: "021",
+              name: "Inferior Golden Ring of the Teo Clan",
+              rarity: "rare",
+            },
+            item_022: {
+              no: "022",
+              name: "Silver Ring of the Teo Clan",
+              rarity: "rare",
+            },
+            item_023: { no: "023", name: "Emerald Ring", rarity: "epic" },
+            item_024: { no: "024", name: "Sapphire Ring", rarity: "epic" },
+            item_025: { no: "025", name: "Topaz Ring", rarity: "rare" },
+            item_026: { no: "026", name: "Jade Ring", rarity: "epic" },
+            item_027: { no: "027", name: "Ring of Yang", rarity: "rare" },
+            item_028: { no: "028", name: "Nature Ring", rarity: "rare" },
+            item_029: { no: "029", name: "Blood Red Ring", rarity: "epic" },
+            item_030: {
+              no: "030",
+              name: "Ring of the Azure Sea",
+              rarity: "epic",
+            },
+            item_031: {
+              no: "031",
+              name: "Inferior Emerald Ring",
+              rarity: "rare",
+            },
+            item_032: {
+              no: "032",
+              name: "Golden Ring of the Teo Clan",
+              rarity: "rare",
+            },
+            item_033: { no: "033", name: "Amethyst Ring", rarity: "epic" },
+            item_034: {
+              no: "034",
+              name: "Emerald Ring of the Teo Clan",
+              rarity: "epic",
+            },
+            item_035: {
+              no: "035",
+              name: "The Divine Tiara",
+              rarity: "divine",
+            },
+          };
 
-            if (progress < 1) {
-              requestAnimationFrame(updateNumber);
+          function packInventory() {
+            return Array.from(document.querySelector(".inventory").children)
+              .map((it) => it.className.match(/item_\d{3}/))
+              .toString();
+          }
+
+          function unpackInventory() {
+            let total;
+            if (data.inv) {
+              Array.from(data.inv.split(",")).forEach((it) => {
+                total += html(items[it]);
+              });
             }
+            if (total) return total.slice(9);
+            else return total;
           }
 
-          requestAnimationFrame(updateNumber);
-        }
-
-        let first_gen = true;
-        let isRolling = false;
-        let sp = 0;
-        let g = 0;
-
-        function initializeRoller() {
-          const rollContainer = document.querySelector(".roll-container");
-
-          for (let i = 1; i < 101; i++) {
-            let rand = randomInt(1, 1000);
-            let r;
-
-            if (rand <= 1) {
-              r = "divine";
-            } else if (rand <= 25) {
-              r = "mythic";
-            } else if (rand <= 75) {
-              r = "legendary";
-            } else if (rand <= 250) {
-              r = "epic";
-            } else if (rand <= 550) {
-              r = "rare";
-            } else {
-              r = "common";
-            }
-
-            const filteredItems = Object.values(items).filter(
-              (item) => item.rarity === r
-            );
-
-            const randomIndex = Math.floor(
-              Math.random() * filteredItems.length
-            );
-            rollContainer.innerHTML += html(filteredItems[randomIndex]);
-          }
-        }
-
-        function calcKarma(item) {
-          let gain = 0;
-          switch (item.rarity) {
-            case "divine":
-              gain += 1_000_000;
-              break;
-            case "mythic":
-              gain += 200_000;
-              break;
-            case "legendary":
-              gain += 50_000;
-              break;
-            case "epic":
-              gain += 20_000;
-              break;
-            case "rare":
-              gain += 12_500;
-              break;
-            case "common":
-              gain += 7_500;
-              break;
-          }
-
-          gain *= Math.round(Math.random() * 50) / 100 + 0.75;
-
-          g =
-            parseInt(
-              document
-                .getElementById("karma_gained")
-                .innerHTML.replace(/,/g, ""),
+          function animateNumber(id, finalNumber, duration) {
+            const karmaElement = document.getElementById(id);
+            let startNumber = parseInt(
+              karmaElement.innerHTML.replace(/,/g, ""),
               10
-            ) + gain;
-          animateNumber("karma_gained", g, 5000);
-          data.test.gained = g;
-        }
+            );
+            const startTime = performance.now();
 
-        function calcLuck(item) {
-          if (item) calcKarma(item);
-          let spend = parseInt(
-            document.getElementById("karma_spent").innerHTML.replace(/,/g, ""),
-            10
-          );
-          const luck = g / (spend ? spend : sp);
-          let lst = (luck + 0.009).toString();
-          lst = lst.split(".")[0] + "." + lst.split(".")[1].slice(0, 2);
+            function easeInOutCubic(t) {
+              return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            }
 
-          document.getElementById("roll_luck").innerHTML = "x" + lst;
-          data.inv = packInventory();
-          window.update(data);
-        }
+            function updateNumber(currentTime) {
+              const elapsedTime = currentTime - startTime;
+              const progress = Math.min(elapsedTime / duration, 1);
 
-        function isSelected(item) {
-          const targetRect = document
-            .querySelector(".roll-holder")
-            .getBoundingClientRect();
-          const centerX = targetRect.left + targetRect.width / 2;
-          const centerY = targetRect.top + targetRect.height / 2;
+              const easedProgress = easeInOutCubic(progress);
+              const currentNumber = Math.floor(
+                startNumber + easedProgress * (finalNumber - startNumber)
+              );
+              karmaElement.textContent = currentNumber.toLocaleString();
 
-          const rect = item.getBoundingClientRect();
-          return (
-            centerX >= rect.left &&
-            centerX <= rect.right &&
-            centerY >= rect.top &&
-            centerY <= rect.bottom
-          );
-        }
+              if (progress < 1) {
+                requestAnimationFrame(updateNumber);
+              }
+            }
 
-        function generate() {
-          if (isRolling) return;
-          isRolling = true;
-          setTimeout(function () {
-            const spent =
+            requestAnimationFrame(updateNumber);
+          }
+
+          let first_gen = true;
+          let isRolling = false;
+          let sp = 0;
+          let g = 0;
+
+          function initializeRoller() {
+            const rollContainer = document.querySelector(".roll-container");
+
+            for (let i = 1; i < 101; i++) {
+              let rand = randomInt(1, 1000);
+              let r;
+
+              if (rand <= 1) {
+                r = "divine";
+              } else if (rand <= 25) {
+                r = "mythic";
+              } else if (rand <= 75) {
+                r = "legendary";
+              } else if (rand <= 250) {
+                r = "epic";
+              } else if (rand <= 550) {
+                r = "rare";
+              } else {
+                r = "common";
+              }
+
+              const filteredItems = Object.values(items).filter(
+                (item) => item.rarity === r
+              );
+
+              const randomIndex = Math.floor(
+                Math.random() * filteredItems.length
+              );
+              rollContainer.innerHTML += html(filteredItems[randomIndex]);
+            }
+          }
+
+          function calcKarma(item) {
+            let gain = 0;
+            switch (item.rarity) {
+              case "divine":
+                gain += 1_000_000;
+                break;
+              case "mythic":
+                gain += 200_000;
+                break;
+              case "legendary":
+                gain += 50_000;
+                break;
+              case "epic":
+                gain += 20_000;
+                break;
+              case "rare":
+                gain += 12_500;
+                break;
+              case "common":
+                gain += 7_500;
+                break;
+            }
+
+            gain *= Math.round(Math.random() * 50) / 100 + 0.75;
+
+            g =
               parseInt(
                 document
-                  .getElementById("karma_spent")
+                  .getElementById("karma_gained")
                   .innerHTML.replace(/,/g, ""),
                 10
-              ) + 10000;
-            animateNumber("karma_spent", spent, 5000);
-            data.test.gained = spent;
+              ) + gain;
+            animateNumber("karma_gained", g, 5000);
+            data.gained = g;
             window.update(data);
-            initializeRoller();
-            const rollContainer = document.querySelector(".roll-container");
-            rollContainer.style.transition = "all 8s cubic-bezier(.08,.6,0,1)";
-            rollContainer.style.marginLeft =
-              (
-                parseInt(
-                  window.getComputedStyle(rollContainer).marginLeft,
-                  10
-                ) - (first_gen ? 6811 : 6851)
-              ).toString() + "px";
-            setTimeout(goRoll, 4500);
-          }, 100);
-        }
+          }
 
-        function goRoll() {
-          setTimeout(function () {
-            let winningItem = NaN;
-            document.querySelectorAll(".item").forEach((item) => {
-              if (isSelected(item)) winningItem = item;
-            });
-            if (!winningItem) {
+          function calcLuck(item) {
+            if (item) calcKarma(item);
+            let spend = parseInt(
+              document
+                .getElementById("karma_spent")
+                .innerHTML.replace(/,/g, ""),
+              10
+            );
+            const luck = g / (spend ? spend : sp);
+            let lst = (luck + 0.0049).toString();
+            lst = lst.split(".")[0] + "." + lst.split(".")[1].slice(0, 2);
+
+            document.getElementById("roll_luck").innerHTML = "x" + lst;
+            data.inv = packInventory();
+            window.update(data);
+          }
+
+          function isSelected(item) {
+            const targetRect = document
+              .querySelector(".roll-holder")
+              .getBoundingClientRect();
+            const centerX = targetRect.left + targetRect.width / 2;
+            const centerY = targetRect.top + targetRect.height / 2;
+
+            const rect = item.getBoundingClientRect();
+            return (
+              centerX >= rect.left &&
+              centerX <= rect.right &&
+              centerY >= rect.top &&
+              centerY <= rect.bottom
+            );
+          }
+
+          function generate() {
+            if (isRolling) return;
+            isRolling = true;
+            setTimeout(function () {
+              const spent =
+                parseInt(
+                  document
+                    .getElementById("karma_spent")
+                    .innerHTML.replace(/,/g, ""),
+                  10
+                ) + 10000;
+              animateNumber("karma_spent", spent, 5000);
+              data.spent = spent;
+              window.update(data);
+              initializeRoller();
+              const rollContainer = document.querySelector(".roll-container");
+              rollContainer.style.transition =
+                "all 8s cubic-bezier(.08,.6,0,1)";
               rollContainer.style.marginLeft =
                 (
                   parseInt(
                     window.getComputedStyle(rollContainer).marginLeft,
                     10
-                  ) - 10
+                  ) - (first_gen ? 6811 : 6851)
                 ).toString() + "px";
-            }
-            document.querySelectorAll(".item").forEach((item) => {
-              if (isSelected(item)) winningItem = item;
-            });
-            const clone = winningItem.cloneNode(true);
-            winningItem.classList.add("winning-item");
-            const winning =
-              items[
-                Array.from(winningItem.classList).find((cls) =>
-                  cls.startsWith("item_")
-                )
+              setTimeout(goRoll, 4500);
+            }, 100);
+          }
+
+          function goRoll() {
+            setTimeout(function () {
+              let winningItem = NaN;
+              document.querySelectorAll(".item").forEach((item) => {
+                if (isSelected(item)) winningItem = item;
+              });
+              if (!winningItem) {
+                rollContainer.style.marginLeft =
+                  (
+                    parseInt(
+                      window.getComputedStyle(rollContainer).marginLeft,
+                      10
+                    ) - 10
+                  ).toString() + "px";
+              }
+              document.querySelectorAll(".item").forEach((item) => {
+                if (isSelected(item)) winningItem = item;
+              });
+              const clone = winningItem.cloneNode(true);
+              winningItem.classList.add("winning-item");
+              const winning =
+                items[
+                  Array.from(winningItem.classList).find((cls) =>
+                    cls.startsWith("item_")
+                  )
+                ];
+              document.getElementById("roll_result").innerHTML = winning.name;
+              document.getElementById("roll_result").classList = [
+                "text_" + winning.rarity,
               ];
-            document.getElementById("roll_result").innerHTML = winning.name;
-            document.getElementById("roll_result").classList = [
-              "text_" + winning.rarity,
-            ];
-            document.querySelector(".inventory").appendChild(clone);
-            if (first_gen) first_gen = false;
-            isRolling = false;
-            calcLuck(winning);
-          }, 4500);
+              document.querySelector(".inventory").appendChild(clone);
+              if (first_gen) first_gen = false;
+              isRolling = false;
+              calcLuck(winning);
+            }, 4500);
+          }
+
+          function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+          }
+
+          function start() {
+            initializeRoller();
+            const iv = unpackInventory();
+            if (iv) document.querySelector(".inventory").innerHTML = iv;
+            animateNumber("karma_spent", data.spent, 1000);
+            animateNumber("karma_gained", data.gained, 1000);
+            sp = data.spent;
+            g = data.gained;
+            if (g) calcLuck(NaN);
+            document.querySelector(".roll").style.transform = `scale(${
+              window.innerWidth / 2000 + 0.3
+            })`;
+            document.getElementById("un").textContent = data.displayName;
+            document.getElementById("google-material").style.visibility =
+              "hidden";
+            document.getElementById(
+              "google"
+            ).innerHTML += `<img src="${data.photoURL}" style="border-radius: 50%; width: 40px; height: 40px; margin-bottom: 32px">`;
+          }
+
+          window.addEventListener("resize", function () {
+            document.querySelector(".roll").style.transform = `scale(${
+              window.innerWidth / 2000 + 0.3
+            })`;
+          });
+
+          function materializeEffect(event) {
+            generate();
+            const open = this;
+            var circle = document.createElement("div");
+            var x = event.layerX;
+            var y = event.layerY;
+            circle.classList.add("circle");
+            circle.style.left = "".concat(x, "px");
+            circle.style.top = "".concat(y, "px");
+            open.appendChild(circle);
+            setTimeout(function () {
+              open.removeChild(circle);
+            }, 900);
+          }
+
+          document
+            .querySelector(".open")
+            .addEventListener("click", materializeEffect);
+
+          start();
         }
-
-        function randomInt(min, max) {
-          return Math.floor(Math.random() * (max - min)) + min;
-        }
-
-        function start() {
-          initializeRoller();
-          const iv = unpackInventory();
-          if (iv) document.querySelector(".inventory").innerHTML = iv;
-          animateNumber("karma_spent", data.test.spent, 1000);
-          animateNumber("karma_gained", data.test.gained, 1000);
-          sp = data.test.spent;
-          g = data.test.gained;
-          if (g) calcLuck(NaN);
-          document.querySelector(".roll").style.transform = `scale(${
-            window.innerWidth / 2000 + 0.3
-          })`;
-          document.getElementById("un").textContent = data.displayName;
-          document.getElementById("google-material").style.visibility =
-            "hidden";
-          document.querySelector(
-            ".google"
-          ).innerHTML += `<img src="${data.photoURL}" style="border-radius: 50%;">`;
-        }
-
-        window.addEventListener("resize", function () {
-          document.querySelector(".roll").style.transform = `scale(${
-            window.innerWidth / 2000 + 0.3
-          })`;
-        });
-
-        function materializeEffect(event) {
-          const open = this;
-          var circle = document.createElement("div");
-          var x = event.layerX;
-          var y = event.layerY;
-          circle.classList.add("circle");
-          circle.style.left = "".concat(x, "px");
-          circle.style.top = "".concat(y, "px");
-          open.appendChild(circle);
-          setTimeout(function () {
-            open.removeChild(circle);
-          }, 900);
-        }
-
-        document
-          .querySelector(".open")
-          .addEventListener("click", materializeEffect);
-
-        start();
       };
     </script>
     <script type="module">
@@ -1252,28 +1291,23 @@
               userData = userDoc.data();
             } else {
               userData = {
+                uid: user.uid,
                 displayName: user.displayName,
                 email: user.email,
                 photoURL: user.photoURL,
                 karma: 0,
                 inv: "",
-                test: {
-                  spent: 0,
-                  gained: 0,
-                },
+                spent: 0,
+                gained: 0,
               };
               await setDoc(userRef, userData);
             }
 
             window.boot(userData);
-            console.log("Booting...");
-            console.log(userData);
-          } else {
-            console.log(user);
           }
         });
 
-        async function authenticate2() {
+        async function googlePopup() {
           try {
             const result = await signInWithPopup(auth, provider);
 
@@ -1288,15 +1322,14 @@
                   userData = userDoc.data();
                 } else {
                   userData = {
+                    uid: user.uid,
                     displayName: user.displayName,
                     email: user.email,
                     photoURL: user.photoURL,
                     karma: 0,
                     inv: "",
-                    test: {
-                      spent: 0,
-                      gained: 0,
-                    },
+                    spent: 0,
+                    gained: 0,
                   };
                   await setDoc(userRef, userData);
                 }
@@ -1309,7 +1342,7 @@
           }
         }
 
-        async function authenticate() {
+        async function googleRedirect() {
           try {
             await signInWithRedirect(auth, provider);
 
@@ -1326,22 +1359,19 @@
                   userData = userDoc.data();
                 } else {
                   userData = {
+                    uid: user.uid,
                     displayName: user.displayName,
                     email: user.email,
                     photoURL: user.photoURL,
                     karma: 0,
                     inv: "",
-                    test: {
-                      spent: 0,
-                      gained: 0,
-                    },
+                    spent: 0,
+                    gained: 0,
                   };
                   await setDoc(userRef, userData);
                 }
 
                 window.boot(userData);
-              } else {
-                console.log(user);
               }
             }
           } catch (error) {
@@ -1350,13 +1380,12 @@
         }
 
         window.update = async function (newData) {
-          const userRef = doc(db, "users", user.uid);
-          await setDoc(userRef, newData);
+          await setDoc(doc(db, "users", newData.uid), newData, { merge: true });
         };
 
         document
           .getElementById("google")
-          .addEventListener("click", authenticate2);
+          .addEventListener("click", googlePopup);
       });
     </script>
   </body>
