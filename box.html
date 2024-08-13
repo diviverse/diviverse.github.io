@@ -59,7 +59,7 @@
         font-family: "Open Sans";
         font-weight: 500;
         font-size: 15px;
-        position: absolute;
+        position: fixed;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -170,10 +170,12 @@
           padding: 15px;
           justify-content: center;
           align-items: center;
+          display: flex;
           right: -50%;
           left: -50%;
-          display: flex;
-          margin-top: 25px;
+          width: 100%;
+          position: fixed;
+          margin: 25px auto 0;
         }
 
         .roll {
@@ -757,7 +759,7 @@
     <div class="center">
       <span class="f25px" style="font-size: 25px; color: white">
         <span style="margin-right: 5px">You have got a/an</span>
-        <span class="text_divine" id="roll_result">...</span>
+        <span id="roll_result">...</span>
       </span>
     </div>
     <div class="center">
@@ -1203,12 +1205,15 @@
         onAuthStateChanged,
         GoogleAuthProvider,
         signInWithPopup,
+        signInWithRedirect,
+        getRedirectResult,
       } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
       import {
         getFirestore,
         doc,
         getDoc,
         setDoc,
+        addDoc,
       } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
       window.addEventListener("load", () => {
@@ -1229,7 +1234,6 @@
         const provider = new GoogleAuthProvider();
         const db = getFirestore(app);
 
-        // Listener for authentication state change
         onAuthStateChanged(auth, async (user) => {
           if (user) {
             const userRef = doc(db, "users", user.uid);
@@ -1253,11 +1257,11 @@
               await setDoc(userRef, userData);
             }
 
-            window.boot(userData); // Pass userData to the boot function
+            window.boot(userData);
           }
         });
 
-        async function authenticate() {
+        async function authenticate2() {
           try {
             const result = await signInWithPopup(auth, provider);
 
@@ -1290,6 +1294,44 @@
             }
           } catch (error) {
             console.error("Error during authentication:", error);
+          }
+        }
+
+        async function authenticate() {
+          try {
+            await signInWithRedirect(auth, provider);
+
+            const result = await getRedirectResult(auth);
+
+            if (result) {
+              const user = result.user;
+              if (user.emailVerified && !user.isAnonymous) {
+                const userRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userRef);
+
+                let userData = {};
+                if (userDoc.exists()) {
+                  userData = userDoc.data();
+                } else {
+                  userData = {
+                    displayName: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL,
+                    karma: 0,
+                    inv: "",
+                    test: {
+                      spent: 0,
+                      gained: 0,
+                    },
+                  };
+                  await setDoc(userRef, userData);
+                }
+
+                window.boot(userData);
+              }
+            }
+          } catch (error) {
+            console.error("Error during authentication with redirect:", error);
           }
         }
 
