@@ -831,8 +831,6 @@
     </div>
     <script>
       window.boot = function (data) {
-        start();
-
         function html(item) {
           return `<div class="item item_${item.no} rarity_${item.rarity}" id="${
             item.name
@@ -1203,6 +1201,8 @@
         document
           .querySelector(".open")
           .addEventListener("click", materializeEffect);
+
+        start();
       };
     </script>
     <script type="module">
