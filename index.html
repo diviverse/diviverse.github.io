@@ -191,6 +191,7 @@
         .roll {
           width: 100vw !important;
           transform: scale(1) !important;
+          margin-top: 145px;
           left: -11px;
         }
 
@@ -845,9 +846,10 @@
       </div>
     </div>
     <script>
-      window.boot = function (data) {
+      window.boot = function (docData) {
         if (!window.running) {
           window.running = true;
+          let data = docData;
 
           function html(item) {
             return `<div class="item item_${item.no} rarity_${
